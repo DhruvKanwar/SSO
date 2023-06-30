@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'sso_unid', 'request_source', 'user_type', 'employee_id', 'company', 'location', 'joining_date', 'block_date',
+        'phone', 'status', 'portal_id', 'role_id', 'dob', 'created_at', 'updated_at',    'user_assigned', 'user_ip'
     ];
 
     /**
@@ -41,4 +43,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function UserRole()
+    {
+        return $this->hasOne('App\Models\RoleDetail', 'id', 'role_id');
+    }
 }

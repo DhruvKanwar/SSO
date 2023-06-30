@@ -49,15 +49,13 @@ class LoginUserController extends Controller
     }
 
     $user = array();
-    $user = DB::table('users')->where('email', $data['login'])
-      ->orwhere('phone', $data['login'])->get();
-
-    //    return $user;
+    $user = DB::table('users')->where('email', $data['login'])->orwhere('employee_id', $data['login'])->orwhere('sso_unid', $data['login'])
+      ->orwhere('phone', $data['login'])->first();
 
 
-    if (!$user->isEmpty()) {
-      $email = $user[0]->email;
-      $password = $user[0]->password;
+    if (!empty($user)) {
+      $email = $user->email;
+      $password = $user->password;
     } else {
       $result_array = array(
         'status' => 'fail',
@@ -67,6 +65,18 @@ class LoginUserController extends Controller
       return response()->json($result_array, 405);
     }
 
+    if (!$user->status) {
+      $result_array = array(
+        'status' => 'fail',
+        'msg' => 'User is Blocked'
+      );
+
+      return response()->json($result_array, 405);
+    }
+
+    // return $user;
+
+
 
 
     $check_password = Hash::check($data['password'], $password);
@@ -74,13 +84,40 @@ class LoginUserController extends Controller
       // return $user;
       $details = Auth::user();
       $id = $details->id;
-      $user = User::find($id);
-      $token['accessToken'] = $user->createToken('Personal Access Token')->accessToken;
-      return $token;
+      $user = User::with('UserRole')->find($id);
+      // return $user;
+      $ip = \Request::ip();
+      User::where('id', $id)->update(['user_ip' => $ip]);
+
+      $send_api_res = array();
+      $send_api_res['user'] = $user;
+      $send_api_res['accessToken'] = $user->createToken('Personal Access Token')->accessToken;
+      return $send_api_res;
     } else {
       $result_array = array(
         'status' => 'fail',
         'msg' => 'Invalid credentials entered'
+      );
+      return response()->json($result_array, 200);
+    }
+  }
+
+  public function logout()
+  {
+    if (Auth::check()) {
+
+      $token = Auth::user()->token();
+      $token->revoke();
+
+      $result_array = array(
+        'status' => 'success',
+        'msg' => 'Logout successfull'
+      );
+      return response()->json($result_array, 200);
+    } else {
+      $result_array = array(
+        'status' => 'success',
+        'msg' => 'not Logged in'
       );
       return response()->json($result_array, 200);
     }

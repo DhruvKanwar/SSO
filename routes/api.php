@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\API\LoginUserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PortalController;
+
+
 
 
 /*
@@ -28,8 +32,8 @@ Route::middleware('auth:api')->get('/logmeout', function (Request $request) {
     $user =  $request->user();
     $accessToken = $user->token();
     DB::table('oauth_refresh_tokens')
-    ->where('access_token_id', $accessToken->id)
-    ->delete();
+        ->where('access_token_id', $accessToken->id)
+        ->delete();
     $user->token()->delete();
 
 
@@ -42,7 +46,14 @@ Route::middleware('auth:api')->get('/logmeout', function (Request $request) {
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/get_user', [HomeController::class, 'get_user_info']);
+    Route::get('/get_all_users', [UserController::class, 'get_all_users']);
+    Route::get('/get_all_portals', [PortalController::class, 'get_all_portals']);
+    Route::post('/assign_portal_admin', [PortalController::class, 'assign_portal_admin']);
+    Route::post('/remove_portal_admin', [PortalController::class, 'remove_portal_admin']);
+    Route::get('/logout', [LoginUserController::class, 'logout']);
+    Route::post('createAccessToken', [App\Http\Controllers\HomeController::class, 'createAccessToken']);
 });
+
 
 
 

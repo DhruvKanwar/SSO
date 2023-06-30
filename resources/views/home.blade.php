@@ -46,6 +46,7 @@
                 axios.post('/createAccessToken')
                     .then(response => {
                         this.api_token = response.data;
+                        console.log(this.api_token)
                         this.redirect_to_child_portal(this.api_token, type);
                     })
                     .catch(response => {
@@ -71,13 +72,16 @@
 
                 }
 
-
-
                 axios.post(this.url, {
                         'access_token': this.api_token
                     }, config)
                     .then(response => {
                         console.log(response.data)
+                        if (response.data == "0") {
+                            alert("User Doesn't exists in this portal")
+                            // swal('error', "User Doesn't exists in this portal", "error")
+                            return 1;
+                        }
                         // return 1;
                         // this.get_session_data();
                         //   window.location.href="http://localhost:8080/home";
