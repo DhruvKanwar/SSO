@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\MailnotSent;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
@@ -288,6 +289,32 @@ class UserController extends Controller
             $result_array = array(
                 'status' => 'fail',
                 'msg' => 'Error in connecting with the Portal you are assigning'
+            );
+
+
+            return response()->json($result_array, 405);
+        }
+    }
+
+    public function get_users_to_assign()
+    {
+        $details = Auth::user();
+        // $get_portal_ids=User::where('employee_id',$details->employee_id)->first();
+
+        $user = User::where('user_assigned', 0)->where('role_id', 3)->with('UserRole')->get();
+       
+        if ($user) {
+            $result_array = array(
+                'status' => 'success',
+                'msg' => 'Data Fetched Successfully...',
+                'data' => $user
+            );
+
+            return response()->json($result_array, 200);
+        } else {
+            $result_array = array(
+                'status' => 'fail',
+                'msg' => 'Error in connecting..'
             );
 
 

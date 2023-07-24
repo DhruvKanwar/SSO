@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/get_user', [HomeController::class, 'get_user_info']);
     Route::get('/get_all_users', [UserController::class, 'get_all_users']);
     Route::get('/get_all_portal_admins', [UserController::class, 'get_all_portal_admins']);
+    Route::get('/get_users_to_assign', [UserController::class, 'get_users_to_assign']);
     Route::get('/get_all_portals', [PortalController::class, 'get_all_portals']);
     Route::post('/assign_portal_admin', [PortalController::class, 'assign_portal_admin']);
     Route::post('/assign_portal_role', [PortalController::class, 'assign_portal_role']);
@@ -56,10 +57,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('createAccessToken', [App\Http\Controllers\HomeController::class, 'createAccessToken']);
 });
 Route::get('/logout', [LoginUserController::class, 'logout']);
-
-
-
-
 
 
 Route::post('/signin', [LoginUserController::class, 'signin']);
