@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\PortalDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -90,7 +91,16 @@ class LoginUserController extends Controller
       User::where('id', $id)->update(['user_ip' => $ip]);
 
       $send_api_res = array();
+      $explode_portal_ids = explode(',', $user->portal_id);
+      $portal_ids_size = sizeof($explode_portal_ids);
+      $portal_data = array();
+      for ($i = 0; $i < $portal_ids_size; $i++) {
+        $portalDBdata = PortalDetails::where('id', $explode_portal_ids[$i])->first();
+        $portal_data[$i] = $portalDBdata;
+
+      }
       $send_api_res['user'] = $user;
+      $send_api_res['portal_data'] = $portal_data;
       $send_api_res['accessToken'] = $user->createToken('Personal Access Token')->accessToken;
       return $send_api_res;
     } else {

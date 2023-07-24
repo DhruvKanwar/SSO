@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,6 +23,8 @@ Route::get("/test", function () {
 });
 
 Auth::routes();
+
+
 
 
 // Route::post('/sigin', [App\Http\Controllers\LoginUserController::class, 'signin'])->name('loggin');
