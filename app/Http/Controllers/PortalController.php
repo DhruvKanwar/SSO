@@ -147,7 +147,7 @@ class PortalController extends Controller
                     CURLOPT_FOLLOWLOCATION => true,
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => 'POST',
-                    CURLOPT_POSTFIELDS => array('email' => $get_new_portal_user[0]->email, 'admin_email' => $details->official_email, 'password' => $get_new_portal_user[0]->password, 'role' => $role, 'name' => $get_new_portal_user[0]->name),
+                    CURLOPT_POSTFIELDS => array('email' => $get_new_portal_user[0]->email, 'admin_email' => $details->email, 'password' => $get_new_portal_user[0]->password, 'role' => $role, 'name' => $get_new_portal_user[0]->name),
                 ));
 
                 $response = curl_exec($curl);
@@ -454,7 +454,7 @@ class PortalController extends Controller
 
 
         $get_new_portal_user = User::where('employee_id', $data['emp_id'])->get();
-        $check_portal_admin=User::where('employee_id',$details->employee_id)->first();
+        $check_portal_admin = User::where('employee_id', $details->employee_id)->first();
         // return $get_new_portal_user[0]->employee_id;
 
         $explode_request_portal_ids = explode(',', $data['portal_id']);
@@ -464,8 +464,7 @@ class PortalController extends Controller
         $diff1 = array_diff($explode_request_portal_ids, $explode_portal_admin_ids);
         $diff2 = array_diff($explode_portal_admin_ids, $explode_request_portal_ids);
         // return [$diff1,$diff2];
-        if(!empty($diff1) || !empty($diff2))
-        {
+        if (!empty($diff1) || !empty($diff2)) {
             $result_array = array(
                 'status' => 'fail',
                 'msg' => 'You don not have access for some portals',
@@ -748,7 +747,6 @@ class PortalController extends Controller
             if ($response) {
                 $portal_data[$i] = $explode_portal_ids[$i];
             }
-
         }
 
         $get_user_data = User::where('employee_id', $data['emp_id'])->first();
