@@ -47,6 +47,7 @@ Route::middleware('auth:api')->get('/logmeout', function (Request $request) {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/get_user', [HomeController::class, 'get_user_info']);
     Route::get('/get_all_users', [UserController::class, 'get_all_users']);
+    Route::get('/get_assigned_portal_users', [UserController::class, 'get_assigned_portal_users']);
     Route::get('/get_all_portal_admins', [UserController::class, 'get_all_portal_admins']);
     Route::get('/get_users_to_assign', [UserController::class, 'get_users_to_assign']);
     Route::get('/get_all_portals', [PortalController::class, 'get_all_portals']);

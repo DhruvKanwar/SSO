@@ -462,9 +462,9 @@ class PortalController extends Controller
         $explode_portal_admin_ids =  explode(',', $check_portal_admin->portal_id);
 
         $diff1 = array_diff($explode_request_portal_ids, $explode_portal_admin_ids);
-        $diff2 = array_diff($explode_portal_admin_ids, $explode_request_portal_ids);
-        // return [$diff1,$diff2];
-        if (!empty($diff1) || !empty($diff2)) {
+        // $diff2 = array_diff($explode_portal_admin_ids, $explode_request_portal_ids);
+        // return [$diff1,$diff2]; 
+        if (!empty($diff1)) {
             $result_array = array(
                 'status' => 'fail',
                 'msg' => 'You don not have access for some portals',
@@ -540,7 +540,7 @@ class PortalController extends Controller
 
         $db_store = UserDetail::create($user_detail);
         if ($db_store) {
-            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'role_id' => 3, 'user_assigned' => 1]);
+            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'assigned_by_id'=>$details->id, 'role_id' => 3, 'user_assigned' => 1]);
         }
 
         $assign_flag = false;
@@ -601,10 +601,10 @@ class PortalController extends Controller
                         }
                         $updated_portal_id = implode(', ', $explode_assigned_id);
                         if ($portal_ids_size == 1 || sizeof($check_explode) == 1) {
-                            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => "", 'role_id' => 3, 'user_assigned' => 0]);
+                            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => "", 'role_id' => 3, 'assigned_by_id'=> $details->id, 'user_assigned' => 0]);
                             UserDetail::where('id', $db_store->id)->delete();
                         } else {
-                            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $updated_portal_id]);
+                            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $updated_portal_id, 'assigned_by_id'=> $details->id]);
                             UserDetail::where('id', $db_store->id)->update([
                                 'portal_id' => $updated_portal_id
                             ]);

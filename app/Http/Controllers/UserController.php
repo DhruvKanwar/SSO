@@ -322,5 +322,31 @@ class UserController extends Controller
         }
     }
 
+    public function get_assigned_portal_users()
+    {
+        $details = Auth::user();
+        // $get_portal_ids=User::where('employee_id',$details->employee_id)->first();
+
+        $user = User::where('user_assigned', 1)->where('role_id', 3)->where('assigned_by_id',$details->id)->with('UserRole')->get();
+
+        if ($user) {
+            $result_array = array(
+                'status' => 'success',
+                'msg' => 'Data Fetched Successfully...',
+                'data' => $user
+            );
+
+            return response()->json($result_array, 200);
+        } else {
+            $result_array = array(
+                'status' => 'fail',
+                'msg' => 'Error in connecting..'
+            );
+
+
+            return response()->json($result_array, 405);
+        }
+    }
+
    
 }
