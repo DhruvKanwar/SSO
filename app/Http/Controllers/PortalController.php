@@ -123,6 +123,8 @@ class PortalController extends Controller
 
         if ($update_user_table) {
 
+            $get_assigned_user_data=User::where('employee_id',$data['emp_id'])->first();
+
             $explode_portal_ids = explode(',', $user_detail['portal_id']);
             $portal_ids_size = sizeof($explode_portal_ids);
             $portal_data = array();
@@ -130,7 +132,8 @@ class PortalController extends Controller
                 $portalDBdata = PortalDetails::where('id', $explode_portal_ids[$i])->first();
                 $url = $portalDBdata->url;
                 $portal_name = $portalDBdata->portal_name;
-                if ($explode_portal_ids[$i] == 1) {
+                if ($explode_portal_ids[$i] == 1 && $get_assigned_user_data->role_id == 2  || 
+                    $explode_portal_ids[$i] == 2 && $get_assigned_user_data->role_id == 2) {
                     $role = "admin user";
                 } else {
                     $role = "";
