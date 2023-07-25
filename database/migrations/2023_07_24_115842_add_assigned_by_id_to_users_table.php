@@ -15,7 +15,9 @@ class AddAssignedByIdToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->string('assigned_by_id')->after('user_assigned');
+
+            $table->string('assigned_by_id')->default(0)->comment("0=>Not assigned")->after('user_assigned');
+
 
         });
     }
