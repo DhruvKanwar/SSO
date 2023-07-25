@@ -131,7 +131,7 @@ class PortalController extends Controller
                 $url = $portalDBdata->url;
                 $portal_name = $portalDBdata->portal_name;
                 if ($explode_portal_ids[$i] == 1) {
-                    $role = "ter user";
+                    $role = "admin user";
                 } else {
                     $role = "";
                 }
