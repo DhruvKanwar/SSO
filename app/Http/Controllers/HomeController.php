@@ -72,6 +72,6 @@ class HomeController extends Controller
 
     public function get_user_info()
     {
-        return "Hello Amit I am Dhruv from Laravel";
+        return "Hello Laravel";
     }
 }

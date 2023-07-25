@@ -204,6 +204,7 @@ class UserController extends Controller
                 $data['phone'] = $res->data[$i]->Mobile1;
                 $data['status'] = $status;
                 $data['role_id'] = '3';
+                $data['assigned_by_id'] = '';
                 $data['user_ip'] = \Request::ip();
                 $store = "";
 
