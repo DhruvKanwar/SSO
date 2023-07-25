@@ -115,7 +115,22 @@ class PortalController extends Controller
 
         $db_store = UserDetail::create($user_detail);
         if ($db_store) {
-            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'role_id' => $data['role_id'], 'user_assigned' => 1]);
+            $check_portal_exists = User::where('employee_id', $data['emp_id'])->first();
+            if(!empty($check_portal_exists->portal_id))
+            {
+                $portals_now=explode(',', $check_portal_exists->portal_id);
+                array_push($portals_now, $data['portal_id'] );
+                sort($portals_now);
+                $updated_portals = implode(', ', $portals_now);
+                $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $updated_portals, 'role_id' => $data['role_id'], 'user_assigned' => 1]);
+
+                
+            }
+            else{
+
+                $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'role_id' => $data['role_id'], 'user_assigned' => 1]);
+
+            }
         }
 
         $assign_flag = false;
