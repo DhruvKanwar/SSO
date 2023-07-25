@@ -171,8 +171,8 @@ class PortalController extends Controller
                 $response = curl_exec($curl);
                 curl_close($curl);
                 $update_user_table = User::where('employee_id', $data['emp_id'])->first();
-
-                if ($response) {
+        
+                if ($response == 101) {
                     $result_array = array(
                         'status' => 'success',
                         'msg' => 'Portal Admin Assigned Successfully...',
@@ -319,7 +319,7 @@ class PortalController extends Controller
 
             // $response = "DS";
 
-            if ($response) {
+            if ($response == 101) {
                 $portal_data[$i] = $explode_portal_ids[$i];
             }
 
@@ -596,7 +596,7 @@ class PortalController extends Controller
                 $response = curl_exec($curl);
                 curl_close($curl);
                 $update_user_table = User::where('employee_id', $data['emp_id'])->first();
-                if ($response) {
+                if ($response == 101) {
                     $result_array = array(
                         'status' => 'success',
                         'msg' => 'Portal Admin Assigned Successfully...',
@@ -762,7 +762,7 @@ class PortalController extends Controller
             // print_r($response);
             // exit;
 
-            if ($response) {
+            if ($response == 101) {
                 $portal_data[$i] = $explode_portal_ids[$i];
             }
         }
