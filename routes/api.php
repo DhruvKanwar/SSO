@@ -61,3 +61,5 @@ Route::get('/logout', [LoginUserController::class, 'logout']);
 
 
 Route::post('/signin', [LoginUserController::class, 'signin']);
+Route::post('/custom_portal_signin', [LoginUserController::class, 'custom_portal_signin']);
+
