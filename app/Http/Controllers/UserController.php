@@ -175,8 +175,9 @@ class UserController extends Controller
                         $month_number[1] = '12';
                         break;
                 }
-                $date_of_birth = $month_number[0] . $month_number[1] . $month_number[2];
+                $date_of_birth = $month_number[2] . $month_number[1] . $month_number[0];
 
+                $dob = $month_number[2] .'-'. $month_number[1] .'-'. $month_number[0];
 
                 // $pfu = "";
                 // if ($res->data[$i]->Grade == "Unit - 1") {
@@ -193,7 +194,7 @@ class UserController extends Controller
                 $data['name'] = $res->data[$i]->Name;
                 $data['email'] = $sso_unid . '@heythere.in';
                 $data['password'] = Hash::make($date_of_birth);
-                $data['dob'] = $res->data[$i]->DateOfBirth;
+                $data['dob'] = $dob;
                 $data['sso_unid'] = $sso_unid;
                 $data['request_source'] = 'spine-sync';
                 $data['user_type'] = 'employee';

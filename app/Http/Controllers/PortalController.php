@@ -46,7 +46,9 @@ class PortalController extends Controller
         // return $get_new_portal_user[0]->employee_id;
 
         $explode_request_portal_ids = explode(',', $data['portal_id']);
-        $explode_assigned_portal_ids =  explode(',', $get_new_portal_user[0]->portal_id);
+        $portal_ids =  explode(',', $get_new_portal_user[0]->portal_id);
+
+        $explode_assigned_portal_ids = array_map('trim', $portal_ids);
 
         if (count(array_diff($explode_request_portal_ids, $explode_assigned_portal_ids)) === 0 && count(array_diff($explode_assigned_portal_ids, $explode_request_portal_ids)) === 0) {
 
@@ -118,7 +120,9 @@ class PortalController extends Controller
             $check_portal_exists = User::where('employee_id', $data['emp_id'])->first();
             if(!empty($check_portal_exists->portal_id))
             {
-                $portals_now=explode(',', $check_portal_exists->portal_id);
+                $portal_data=explode(',', $check_portal_exists->portal_id);
+                $portals_now = array_map('trim', $portal_data);
+
                 array_push($portals_now, $data['portal_id'] );
                 sort($portals_now);
                 $updated_portals = implode(', ', $portals_now);
@@ -140,7 +144,11 @@ class PortalController extends Controller
 
             $get_assigned_user_data=User::where('employee_id',$data['emp_id'])->first();
 
-            $explode_portal_ids = explode(',', $user_detail['portal_id']);
+            $portal_id = explode(',', $user_detail['portal_id']);
+
+            $explode_portal_ids = array_map('trim', $portal_id);
+
+
             $portal_ids_size = sizeof($explode_portal_ids);
             $portal_data = array();
             for ($i = 0; $i < $portal_ids_size; $i++) {
@@ -186,7 +194,10 @@ class PortalController extends Controller
                     if (!empty($db_store)) {
 
                         $portal_assigned_id = $db_store->portal_id;
-                        $explode_assigned_id = explode(',', $portal_assigned_id);
+                        $assigned_id = explode(',', $portal_assigned_id);
+
+                        $explode_assigned_id = array_map('trim', $assigned_id);
+
                         $check_explode = array();
                         $check_explode = $explode_assigned_id;
                         $key = array_search($explode_portal_ids[$i], $explode_assigned_id);
@@ -233,6 +244,7 @@ class PortalController extends Controller
 
 
         $get_new_portal_user = User::where('employee_id', $data['emp_id'])->get();
+
         // return $get_new_portal_user[0]->employee_id;
         if (empty($get_new_portal_user[0]->portal_id)) {
             $result_array = array(
@@ -271,23 +283,13 @@ class PortalController extends Controller
         }
 
 
-        // if ($db_store) {
-        //     $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'role_id' => $data['role_id'], 'user_assigned' => 1]);
-        // }
-
-        $assign_flag = false;
+      
         $result_array = array();
 
 
-        $existingValues = array();
-
         $explode_portal_ids = explode(',', $data['portal_id']);
         $portal_ids_size = sizeof($explode_portal_ids);
-        $user_data = User::where('employee_id', $data['emp_id'])->first();
-        $assign_portal = $user_data->portal_id;
-        $explode_portal_ids_present = explode(',', $assign_portal);
-        $present_size_portal_ids = sizeof($explode_portal_ids_present);
-
+  
 
         $portal_data = array();
         for ($i = 0; $i < $portal_ids_size; $i++) {
@@ -323,84 +325,12 @@ class PortalController extends Controller
                 $portal_data[$i] = $explode_portal_ids[$i];
             }
 
-
-            // if ($response) {
-            //     $update_user_table = User::where('employee_id', $data['emp_id'])->first();
-
-            //     $get_user =  User::where('employee_id', $data['emp_id'])->first();
-            //     $assigned_portal_ids = $get_user->portal_id;
-            //     $explode_assigned_id = explode(',', $assigned_portal_ids);
-
-            //     $number_array=[$explode_portal_ids[$i]];
-            //     $filteredArray = array_diff($explode_assigned_id, $number_array);
-            //     $updated_portal_id = implode(', ', $filteredArray);
-
-            //     if ($present_size_portal_ids == 1 || sizeof($explode_assigned_id)==1) {
-            //         $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => "", 'role_id' => 3, 'user_assigned' => 0]);
-            //     } else {
-            //         $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $updated_portal_id]);
-            //         UserDetail::where('id', $db_store->id)->update([
-            //             'portal_id' => $updated_portal_id
-            //         ]);
-            //     }
-            //     $updated_portal_details = User::where('employee_id', $data['emp_id'])->first();
-
-            //     $result_array = array(
-            //         'status' => 'success',
-            //         'msg' => 'Portal Admin Removed Successfully...',
-            //         'portal_id' => $updated_portal_details->portal_id
-            //     );
-            //     // $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'role_id' => $data['role_id'], 'user_assigned' => 1]);
-            //     $assign_flag = true;
-            // } else {
-            //     $db_store = UserDetail::where('user_id', $user_detail['user_id'])->whereNotNull('remove_date')->latest('id')->first();
-
-            //     if (!empty($db_store)) {
-            //         $portal_assigned_id = $db_store->portal_id;
-            //         $explode_assigned_id = explode(',', $portal_assigned_id);
-
-            //         // Check if the value exists in the array
-            //         if (!in_array($explode_portal_ids[$i], $explode_assigned_id)) {
-            //             // If the value does not exist, add it to the array
-            //             $existingValues[] = $explode_portal_ids[$i];
-            //             $updated_portal_id = implode(',', $existingValues);
-            //             // Implode the array into a string
-
-            //             if ($present_size_portal_ids == 1) {
-            //                 $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => "", 'role_id' => 3, 'user_assigned' => 0]);
-            //                 UserDetail::where('id', $db_store->id)->delete();
-            //             } else {
-            //                 $update_user_table = User::where('employee_id',
-            //                     $data['emp_id']
-            //                 )->update(['portal_id' => $updated_portal_id]);
-            //                 UserDetail::where('id', $db_store->id)->update([
-            //                     'portal_id' => $updated_portal_id
-            //                 ]);
-            //             }
-
-            //         }
-            //         // else{
-            //         //     UserDetail::where('id', $db_store->id)->delete();
-            //         // }
-
-
-
-            //         $update_user_table = User::where('employee_id', $data['emp_id'])->first();
-
-            //         $result_array = array(
-            //             'status' => 'fail',
-            //             'msg' => 'Error in connecting with the Portal you are assigning',
-            //             'portal_name' => $portal_name,
-            //             'portal_id' => $update_user_table->portal_id
-            //         );
-
-            //         $assign_flag = false;
-            //     }
-            // }
         }
 
         $get_user_data = User::where('employee_id', $data['emp_id'])->first();
-        $explode_user_portal_id = explode(',', $get_user_data->portal_id);
+        $portal_id = explode(',', $get_user_data->portal_id);
+        $explode_user_portal_id = array_map('trim', $portal_id);
+
 
 
         $remove_ids = array_intersect($explode_user_portal_id, $portal_data);
@@ -475,14 +405,15 @@ class PortalController extends Controller
         $check_portal_admin = User::where('employee_id', $details->employee_id)->first();
         // return $get_new_portal_user[0]->employee_id;
 
+   
         $explode_request_portal_ids = explode(',', $data['portal_id']);
         $explode_assigned_portal_ids =  explode(',', $get_new_portal_user[0]->portal_id);
         $explode_portal_admin_ids =  explode(',', $check_portal_admin->portal_id);
 
-        $diff1 = array_diff($explode_request_portal_ids, $explode_portal_admin_ids);
-        // $diff2 = array_diff($explode_portal_admin_ids, $explode_request_portal_ids);
-        // return [$diff1,$diff2]; 
-        if (!empty($diff1)) {
+        $array1_without_spaces = array_map('trim', $explode_portal_admin_ids);
+        $commonValues = array_intersect($array1_without_spaces, $explode_request_portal_ids);
+
+        if (empty($commonValues)) {
             $result_array = array(
                 'status' => 'fail',
                 'msg' => 'You don not have access for some portals',
@@ -673,10 +604,11 @@ class PortalController extends Controller
         $explode_request_portal_ids = explode(',', $data['portal_id']);
         $explode_portal_admin_ids =  explode(',', $check_portal_admin->portal_id);
 
-        $diff1 = array_diff($explode_request_portal_ids, $explode_portal_admin_ids);
-        $diff2 = array_diff($explode_portal_admin_ids, $explode_request_portal_ids);
-        // return [$diff1,$diff2];
-        if (!empty($diff1)) {
+        $array1_without_spaces = array_map('trim', $explode_portal_admin_ids);
+        $commonValues = array_intersect($array1_without_spaces, $explode_request_portal_ids);
+
+     
+        if (empty($commonValues)) {
             $result_array = array(
                 'status' => 'fail',
                 'msg' => 'You don not have access for some portals',
@@ -780,10 +712,14 @@ class PortalController extends Controller
         }
 
         $get_user_data = User::where('employee_id', $data['emp_id'])->first();
-        $explode_user_portal_id = explode(',', $get_user_data->portal_id);
+        $portal_id = explode(',', $get_user_data->portal_id);
 
+
+        $explode_user_portal_id = array_map('trim', $portal_id);
+        // $commonValues = array_intersect($array1_without_spaces, $explode_request_portal_ids);
 
         $remove_ids = array_intersect($explode_user_portal_id, $portal_data);
+
 
         $user_detail['user_id'] = $data['emp_id'];
         $user_detail['role_id'] = '3';
