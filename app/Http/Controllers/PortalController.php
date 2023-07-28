@@ -558,7 +558,18 @@ class PortalController extends Controller
 
         $db_store = UserDetail::create($user_detail);
         if ($db_store) {
-            $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'assigned_by_id'=>$details->id, 'role_id' => 3, 'user_assigned' => 1]);
+            $check_portal_exists = User::where('employee_id', $data['emp_id'])->first();
+            if (!empty($check_portal_exists->portal_id)) {
+                $portals_now = explode(',', $check_portal_exists->portal_id);
+                array_push($portals_now, $data['portal_id']);
+                sort($portals_now);
+                $updated_portals = implode(', ', $portals_now);
+                $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $updated_portals, 'role_id' => 3, 'user_assigned' => 1]);
+            } else {
+
+                $update_user_table = User::where('employee_id', $data['emp_id'])->update(['portal_id' => $data['portal_id'], 'assigned_by_id' => $details->id, 'role_id' => 3, 'user_assigned' => 1]);
+            }
+
         }
 
         $assign_flag = false;
@@ -594,6 +605,7 @@ class PortalController extends Controller
                 ));
 
                 $response = curl_exec($curl);
+                // return $response;
                 curl_close($curl);
                 $update_user_table = User::where('employee_id', $data['emp_id'])->first();
                 if ($response == 101) {
@@ -664,7 +676,7 @@ class PortalController extends Controller
         $diff1 = array_diff($explode_request_portal_ids, $explode_portal_admin_ids);
         $diff2 = array_diff($explode_portal_admin_ids, $explode_request_portal_ids);
         // return [$diff1,$diff2];
-        if (!empty($diff1) || !empty($diff2)) {
+        if (!empty($diff1)) {
             $result_array = array(
                 'status' => 'fail',
                 'msg' => 'You don not have access for some portals',
