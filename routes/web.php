@@ -36,3 +36,6 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::get('get_spine_user', [App\Http\Controllers\UserController::class, 'get_user_from_spine']);
+
+Route::get('tokenPurging', [App\Http\Controllers\HomeController::class, 'tokenPurging']);
+

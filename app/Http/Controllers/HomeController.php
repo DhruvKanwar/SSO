@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
+use Carbon\Carbon;
+use Laravel\Passport\Token;
 
 class HomeController extends Controller
 {
@@ -73,5 +75,17 @@ class HomeController extends Controller
     public function get_user_info()
     {
         return "Hello Laravel";
+    }
+
+    public function tokenPurging()
+    {
+        
+//  will work once in a day during midnight crone 
+        $now = Carbon::now();
+        // Delete expired tokens (with a buffer time) from the database
+        Token::where('created_at', '<', $now)->delete();
+
+        return response()->json(['message' => 'Expired tokens have been purged from the database.']);
+    
     }
 }

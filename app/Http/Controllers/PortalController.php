@@ -8,6 +8,9 @@ use App\Models\UserDetail;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Ui\Presets\React;
+use Illuminate\Support\Facades\Mail;
+use App\Models\MailnotSent;
+
 
 class PortalController extends Controller
 {
@@ -228,14 +231,54 @@ class PortalController extends Controller
                     }
                 }
             }
-            if ($assign_flag) {
-                return response()->json($result_array, 200);
+
+            $host=1;
+
+            if($host)
+            {
+            $data['title'] = "Admin assigned";
+            $data['email'] = 'itsupport@frontierag.com';
+            $get_portal_id=User::where('employee_id',$data['emp_id'])->first();
+            $explode=explode(',',$get_portal_id->portal_id);
+            $portal_names=self::fetch_portals($explode);
+            $data['portal_names']= $portal_names;
+            $data['name']= $get_portal_id->name;
+            if (!empty($data["email"])) {
+
+                // return view('emails.UserLoginDetails', $data);
+               Mail::mailer('smtp')->send('emails.AssignAdmin', $data, function ($message) use ($data) {
+                    $message->to($data["email"], $data["email"])
+                        ->from($address = 'do-not-reply@frontierag.com', $name = 'Frontiers No Reply')
+                        ->subject($data["title"]);
+                });
+                // return $t;
             } else {
-                return response()->json($result_array, 200);
+                // dd("f");
+                // print_r("DS");
+                $mail_not_sent['mail_response'] = 'No Email Found';
+                $res = MailnotSent::create($mail_not_sent);
             }
+
+        }
+            return response()->json($result_array, 200);
+         
         }
     }
 
+    public static function fetch_portals($inputArray)
+    {
+        $portalNames = [];
+        foreach ($inputArray as $value) {
+            if ($value == 1) {
+                $portalNames[] = 'TER';
+            } elseif ($value == 2) {
+                $portalNames[] = 'EaseMyLR';
+            } 
+
+            return $portalNames;
+        }
+
+    }
 
     public function remove_portal_admin(Request $request)
     {
@@ -381,6 +424,36 @@ class PortalController extends Controller
             'msg' => 'Portal Admin Removed Successfully...',
             'portal_id' => $updated_portal_details->portal_id
         );
+
+
+
+        $host = 1;
+
+        if ($host) {
+            $data['title'] = "Admin Removed";
+            $data['email'] = 'itsupport@frontierag.com';
+            $get_portal_id = UserDetail::where('user_id', $data['emp_id'])->orderBy('id', 'desc')->first();
+            $explode = explode(',', $get_portal_id->portal_id);
+            $portal_names = self::fetch_portals($explode);
+            $data['portal_names'] = $portal_names;
+            $data['name'] = $get_portal_id->name;
+            if (!empty($data["email"])) {
+
+                // return view('emails.UserLoginDetails', $data);
+                Mail::mailer('smtp')->send('emails.RemoveAdmin', $data, function ($message) use ($data) {
+                    $message->to($data["email"], $data["email"])
+                        ->from($address = 'do-not-reply@frontierag.com', $name = 'Frontiers No Reply')
+                        ->subject($data["title"]);
+                });
+                // return $t;
+            } else {
+                // dd("f");
+                // print_r("DS");
+                $mail_not_sent['mail_response'] = 'No Email Found';
+                $res = MailnotSent::create($mail_not_sent);
+            }
+        }
+
         return response()->json($result_array, 200);
 
 
@@ -584,11 +657,37 @@ class PortalController extends Controller
                     }
                 }
             }
-            if ($assign_flag) {
-                return response()->json($result_array, 200);
-            } else {
-                return response()->json($result_array, 200);
+
+            $host=1;
+
+            if ($host) {
+                $data['title'] = "Portal Role assigned";
+                $data['email'] = 'itsupport@frontierag.com';
+                $get_portal_id = User::where('employee_id', $data['emp_id'])->first();
+                $explode = explode(',', $get_portal_id->portal_id);
+                $portal_names = self::fetch_portals($explode);
+                $data['portal_names'] = $portal_names;
+                $data['name'] = $get_portal_id->name;
+                if (!empty($data["email"])) {
+
+                    // return view('emails.UserLoginDetails', $data);
+                    Mail::mailer('smtp')->send('emails.AssignPortal', $data, function ($message) use ($data) {
+                        $message->to($data["email"], $data["email"])
+                            ->from($address = 'do-not-reply@frontierag.com', $name = 'Frontiers No Reply')
+                            ->subject($data["title"]);
+                    });
+                    // return $t;
+                } else {
+                    // dd("f");
+                    // print_r("DS");
+                    $mail_not_sent['mail_response'] = 'No Email Found';
+                    $res = MailnotSent::create($mail_not_sent);
+                }
             }
+
+            return response()->json($result_array, 200);
+          
+        
         }
     }
 
@@ -761,6 +860,33 @@ class PortalController extends Controller
             'msg' => 'Portal Admin Removed Successfully...',
             'portal_id' => $updated_portal_details->portal_id
         );
+
+        $host = 1;
+
+        if ($host) {
+            $data['title'] = "Portal Role Removed";
+            $data['email'] = 'itsupport@frontierag.com';
+            $get_portal_id = UserDetail::where('user_id', $data['emp_id'])->orderBy('id', 'desc')->first();
+            $explode = explode(',', $get_portal_id->portal_id);
+            $portal_names = self::fetch_portals($explode);
+            $data['portal_names'] = $portal_names;
+            $data['name'] = $get_portal_id->name;
+            if (!empty($data["email"])) {
+
+                // return view('emails.UserLoginDetails', $data);
+                Mail::mailer('smtp')->send('emails.RemovePortal', $data, function ($message) use ($data) {
+                    $message->to($data["email"], $data["email"])
+                        ->from($address = 'do-not-reply@frontierag.com', $name = 'Frontiers No Reply')
+                        ->subject($data["title"]);
+                });
+                // return $t;
+            } else {
+                // dd("f");
+                // print_r("DS");
+                $mail_not_sent['mail_response'] = 'No Email Found';
+                $res = MailnotSent::create($mail_not_sent);
+            }
+        }
         return response()->json($result_array, 200);
 
 
@@ -784,4 +910,6 @@ class PortalController extends Controller
         $res = PortalDetails::get();
         return $res;
     }
+
+
 }
